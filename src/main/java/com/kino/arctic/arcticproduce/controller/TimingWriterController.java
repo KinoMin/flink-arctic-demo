@@ -12,10 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -38,7 +35,7 @@ public class TimingWriterController {
 
 
     @GetMapping("/test")
-    public void test(@PathVariable("time") Long time) throws InterruptedException {
+    public void test(@RequestParam("time") Long time) throws InterruptedException {
         while (true) {
             for (int i = 0; i < 50; i++) {
                 // insert
@@ -79,7 +76,7 @@ public class TimingWriterController {
     }
 
     @GetMapping("/write")
-    public void write(@PathVariable("time") Long time) throws SQLException, InterruptedException {
+    public void write(@RequestParam("time") Long time) throws SQLException, InterruptedException {
         Connection connection = datasource.getConnection();
         int count = 0;
 
@@ -105,7 +102,7 @@ public class TimingWriterController {
                     connection.prepareStatement(sql).execute();
 
                     count = count + 2;
-                    System.out.println("累积操作: "+count + " 次");
+//                    System.out.println("累积操作: "+count + " 次");
                 }
                 Thread.sleep(time);
                 for (int i = 0; i < 10; i++) {
@@ -122,7 +119,7 @@ public class TimingWriterController {
                     connection.prepareStatement(sql).execute();
 
                     count = count + 2;
-                    System.out.println("累积操作: "+count + " 次");
+//                    System.out.println("累积操作: "+count + " 次");
                 }
                 Thread.sleep(time);
                 for (int i = 0; i < 10; i++) {
@@ -135,7 +132,7 @@ public class TimingWriterController {
                     connection.prepareStatement(sql).execute();
 
                     count = count + 2;
-                    System.out.println("累积操作: "+count + " 次");
+//                    System.out.println("累积操作: "+count + " 次");
                 }
             }
         }

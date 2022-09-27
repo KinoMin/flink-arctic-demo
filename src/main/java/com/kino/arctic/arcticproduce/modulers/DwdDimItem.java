@@ -398,7 +398,7 @@ public class DwdDimItem {
         StringBuffer sql = new StringBuffer();
         sql.append("delete from dwd_dim_item ");
         sql.append(" where id = " + one.getId());
-        System.out.println("==> delete sql: "+sql.toString());
+//        System.out.println("==> delete sql: "+sql.toString());
         return sql.toString();
     }
 

@@ -122,6 +122,12 @@ public class DwdDimStoreItemJdbcImpl extends JdbcBase<DwdDimStoreItem> {
             connection.prepareStatement(sql).execute();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
