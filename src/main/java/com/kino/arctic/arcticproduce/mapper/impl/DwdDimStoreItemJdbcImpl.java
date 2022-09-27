@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
+import java.sql.Connection;
 import java.sql.SQLException;
 
 @Service
@@ -48,8 +49,10 @@ public class DwdDimStoreItemJdbcImpl extends JdbcBase<DwdDimStoreItem> {
 
     @Override
     public String genUpdateSql() {
+        Connection connection = null;
         try {
-            DwdDimStoreItem dwdDimStoreItem = super.query(datasource.getConnection(), "dwd_dim_store_item");
+            connection = datasource.getConnection();
+            DwdDimStoreItem dwdDimStoreItem = super.query(connection, "dwd_dim_store_item");
             StringBuffer sql = new StringBuffer();
             sql.append("update dwd_dim_store_item set ");
             sql.append("  item_code =  '" + dwdDimStoreItem.getItemCode() + "'");
@@ -79,28 +82,44 @@ public class DwdDimStoreItemJdbcImpl extends JdbcBase<DwdDimStoreItem> {
             return sql.toString();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
 
     @Override
     public String genDeleteSql() {
+        Connection connection = null;
         try {
-            DwdDimStoreItem dwdDimStoreItem = super.query(datasource.getConnection(), "dwd_dim_store_item");
+            connection = datasource.getConnection();
+            DwdDimStoreItem dwdDimStoreItem = super.query(connection, "dwd_dim_store_item");
             StringBuffer sql = new StringBuffer();
             sql.append("delete from dwd_dim_store_item ");
             sql.append(" where id = " + dwdDimStoreItem.getId());
             return sql.toString();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
 
     @Override
     public void executor(String sql) {
+        Connection connection = null;
         try {
-            datasource.getConnection().prepareStatement(sql).execute();
+            connection = datasource.getConnection();
+            connection.prepareStatement(sql).execute();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }

@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,7 +27,7 @@ import java.sql.SQLException;
 @Slf4j
 public class TimingWriterController {
     public static Logger LOG = LoggerFactory.getLogger(TimingWriterController.class);
-    private static final long SLEEPTIME = 500L;
+    private static final long SLEEPTIME = 10000L;
 
     @Autowired
     private DataSource datasource;
@@ -37,7 +38,7 @@ public class TimingWriterController {
 
 
     @GetMapping("/test")
-    public void test() throws InterruptedException {
+    public void test(@PathVariable("time") Long time) throws InterruptedException {
         while (true) {
             for (int i = 0; i < 50; i++) {
                 // insert
@@ -58,7 +59,7 @@ public class TimingWriterController {
 //                System.out.println("storeInsertSql: " + storeInsertSql);
 //                System.out.println("itemInsertSql: " + itemInsertSql);
             }
-            Thread.sleep(SLEEPTIME);
+            Thread.sleep(time);
             for (int i = 0; i < 10; i++) {
                 // update
                 String itemUpdateSql = dwdDimItemJdbcImpl.genUpdateSql();
@@ -66,7 +67,7 @@ public class TimingWriterController {
                 dwdDimStoreItemJdbcImpl.executor(itemUpdateSql);
                 dwdDimItemJdbcImpl.executor(storeUpdateSql);
             }
-            Thread.sleep(SLEEPTIME);
+            Thread.sleep(time);
             for (int i = 0; i < 5; i++) {
                 // delete
                 String itemDeleteSql = dwdDimItemJdbcImpl.genDeleteSql();
@@ -78,7 +79,7 @@ public class TimingWriterController {
     }
 
     @GetMapping("/write")
-    public void write() throws SQLException, InterruptedException {
+    public void write(@PathVariable("time") Long time) throws SQLException, InterruptedException {
         Connection connection = datasource.getConnection();
         int count = 0;
 
@@ -106,7 +107,7 @@ public class TimingWriterController {
                     count = count + 2;
                     System.out.println("累积操作: "+count + " 次");
                 }
-                Thread.sleep(SLEEPTIME);
+                Thread.sleep(time);
                 for (int i = 0; i < 10; i++) {
                     DwdDimStoreItem dwdDimStoreItem = DwdDimStoreItem.getInstance(Utils.getRandomTime());
                     dwdDimStoreItem = new DwdDimStoreItem();
@@ -123,7 +124,7 @@ public class TimingWriterController {
                     count = count + 2;
                     System.out.println("累积操作: "+count + " 次");
                 }
-                Thread.sleep(SLEEPTIME);
+                Thread.sleep(time);
                 for (int i = 0; i < 10; i++) {
                     DwdDimStoreItem dwdDimStoreItem = DwdDimStoreItem.getInstance(Utils.getRandomTime());
                     sql = dwdDimStoreItem.getSql(3, dwdDimStoreItem, connection);

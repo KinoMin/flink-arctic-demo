@@ -116,6 +116,7 @@ public class DwdDimItemJdbcImpl extends JdbcBase<DwdDimItem> {
     public void executor(String sql) {
         Connection connection = null;
         try {
+            connection = datasource.getConnection();
             connection.prepareStatement(sql).execute();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
